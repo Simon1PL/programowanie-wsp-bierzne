@@ -1,0 +1,45 @@
+Jeśli zamienimy notify na notify all to zadziala P-Producent K-Konsument
+
+Mamy: K1, K2, P1
+0.
+	produktów: 0
+	wait: 
+	synhronized: P1, K1, K2
+	next queueMonitor: K1 // wykonujemy taki krok, po nim otrzymujemy kolejny stan(1)
+1.
+	produktów: 0
+	wait: K1
+	synhronized: P1, K2
+	next queueMonitor: K2
+2.
+	produktów: 0
+	wait: K1, K2
+	synhronized: P1
+	next queueMonitor: P1
+3.
+	produktów: 1
+	wait: K2
+	synhronized: K1, P1
+	next queueMonitor: P1
+4.
+	produktów: 1 -> 0
+	wait: P1, K2
+	synhronized: K1
+	next queueMonitor: K1
+5.
+	produktów: 0
+	wait: P1
+	synhronized: K1, K2
+	next queueMonitor: K1
+6.
+	produktów: 0
+	wait: P1, K1
+	synhronized: K2
+	next queueMonitor: K2
+7.
+	produktów: 0
+	wait: K1, K2, P1
+	synhronized:
+	next queueMonitor:
+
+W sumie 7 kroków/przejsc do zakleszczenia conajmniej, 8 stanów bo jeszcze poczatkowy/koncowy
