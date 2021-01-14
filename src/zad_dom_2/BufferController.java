@@ -9,48 +9,61 @@ import java.util.Arrays;
  */
 
 public class BufferController implements CSProcess {
-    private final One2OneChannelInt[] in; // Inputs from Producer
-    private final One2OneChannelInt[] req; // Requests for data from Consumer
-    private final One2OneChannelInt[] buffers;
-    private final One2OneChannelInt[] buffersReady;
-    private final One2OneChannelInt[] endWorkChan;
+    private final One2OneChannelInt[] producersChannels; // Inputs from Producer
+    private final One2OneChannelInt[] consumersRequestsChannels; // Requests for data from Consumer
+    private final One2OneChannelInt[] consumersChannels; // Output for Consumer, need here to end consumers work
+    private final One2OneChannelInt[] buffersChannels;
+    private final One2OneChannelInt[] buffersReadyChannels;
+    private final One2OneChannelInt[] endWorkChannels;
+    private int consumedItemsAmount = 0;
 
-    public BufferController(final One2OneChannelInt[] in, final One2OneChannelInt[] req, final One2OneChannelInt[] buffers, final One2OneChannelInt[] buffersReady, final One2OneChannelInt[] endWorkChan) {
-        this.in = in;
-        this.req = req;
-        this.buffers = buffers;
-        this.buffersReady = buffersReady;
-        this.endWorkChan = endWorkChan;
+    public BufferController(final One2OneChannelInt[] producersChannels, final One2OneChannelInt[] consumersRequestsChannels, final One2OneChannelInt[] consumersChannels, final One2OneChannelInt[] buffersChannels, final One2OneChannelInt[] buffersReadyChannels, final One2OneChannelInt[] endWorkChannels) {
+        this.producersChannels = producersChannels;
+        this.consumersRequestsChannels = consumersRequestsChannels;
+        this.consumersChannels = consumersChannels;
+        this.buffersChannels = buffersChannels;
+        this.buffersReadyChannels = buffersReadyChannels;
+        this.endWorkChannels = endWorkChannels;
     }
 
     public void run() {
-        final Guard[] guards = new Guard[in.length + req.length + buffers.length]; // = [[in.in()], [req.in()], [endWork.in()]]
-        final Guard[] buffersGuards = Arrays.stream(buffersReady).map(One2OneChannelInt::in).toArray(Guard[]::new); // new Guard[buffers.length];
-        for (int i = 0; i < in.length; i++) {
-            guards[i] = in[i].in();
+        final Guard[] guards = new Guard[producersChannels.length + consumersRequestsChannels.length + buffersChannels.length]; // = [...producersChannels, ...consumersRequestsChannels, ...endWorkChannels]
+        for (int i = 0; i < producersChannels.length; i++) {
+            guards[i] = producersChannels[i].in();
         }
-        for (int i = 0; i < req.length; i++) {
-            guards[i + in.length] = req[i].in();
+        for (int i = 0; i < consumersRequestsChannels.length; i++) {
+            guards[i + producersChannels.length] = consumersRequestsChannels[i].in();
         }
-        for (int i = 0; i < buffers.length; i++) {
-            guards[i + in.length + req.length] = endWorkChan[i].in();
+        for (int i = 0; i < buffersChannels.length; i++) {
+            guards[i + producersChannels.length + consumersRequestsChannels.length] = endWorkChannels[i].in();
         }
         final Alternative alt = new Alternative(guards);
+
+        final Guard[] buffersGuards = Arrays.stream(buffersReadyChannels).map(One2OneChannelInt::in).toArray(Guard[]::new); // new Guard[buffers.length];
         final Alternative buffersAlt = new Alternative(buffersGuards);
-        int buffersAmount = buffers.length; // Number of buffers running
+
+        int buffersAmount = buffersChannels.length; // Number of buffers running
         while (buffersAmount > 0) {
             int bufferIndex = buffersAlt.select();
-            int bufferInfo = buffersReady[bufferIndex].in().read();
-            if (bufferInfo == -1) {
+            int bufferReadyStatus = buffersReadyChannels[bufferIndex].in().read();
+            if (bufferReadyStatus == -1) {
                 buffersAmount--;
             }
-            else if (bufferInfo == 1) {
+            else if (bufferReadyStatus == 1) {
                 int index = alt.select(); // alt.fairSelect();
-                buffers[bufferIndex].out().write(index);
+                buffersChannels[bufferIndex].out().write(index);
             }
             else {
-                System.err.println("Buffers channel should send only value \"-1\" or \"1\"!");
+                System.err.println("Buffer ready status should have only value \"-1\" or \"1\"!");
             }
         }
+        System.out.println("\u001B[37m" + "All buffers ends");
+
+        for (int i = 0; i < consumersChannels.length; i++) {
+            consumersRequestsChannels[i].in().read();
+            consumersChannels[i].out().write(-1);
+            consumedItemsAmount += consumersRequestsChannels[i].in().read();
+        }
+        System.out.println("\u001B[37m" + "All consumers ends, consumed items: " + consumedItemsAmount);
     }
 }

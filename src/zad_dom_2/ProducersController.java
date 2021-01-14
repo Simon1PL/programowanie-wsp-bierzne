@@ -5,29 +5,32 @@ import org.jcsp.lang.*;
 import java.util.Arrays;
 
 /**
- * ProducersController class: reads producer's end channels, when there are no more producers write on endWork channel
+ * ProducersController class: reads producer's ends channels, when there are no more producers write on endWork channels
  */
 public class ProducersController implements CSProcess {
     private int producerAmount;
-    private final One2OneChannelInt[] producersEnd;
-    private final One2OneChannelInt[] endWork;
+    private final One2OneChannelInt[] producersEndsChannels;
+    private final One2OneChannelInt[] endWorkChannels;
+    private int producedItemsAmount = 0;
 
-    public ProducersController(final One2OneChannelInt[] producersEnd, final One2OneChannelInt[] endWork) {
-        this.producersEnd = producersEnd;
-        this.endWork = endWork;
-        this.producerAmount = producersEnd.length;
+    public ProducersController(final One2OneChannelInt[] producersEndsChannels, final One2OneChannelInt[] endWorkChannels) {
+        this.producersEndsChannels = producersEndsChannels;
+        this.endWorkChannels = endWorkChannels;
+        this.producerAmount = producersEndsChannels.length;
     }
 
     public void run() {
-        final Guard[] guards = Arrays.stream(producersEnd).map(One2OneChannelInt::in).toArray(Guard[]::new); // new Guard[producerAmount];
+        final Guard[] guards = Arrays.stream(producersEndsChannels).map(One2OneChannelInt::in).toArray(Guard[]::new); // new Guard[producerAmount];
         final Alternative alt = new Alternative(guards);
 
         while (producerAmount > 0) {
             int index = alt.select();
-            producersEnd[index].in().read();
+            producedItemsAmount += producersEndsChannels[index].in().read();
             producerAmount--;
         }
-        Arrays.stream(endWork).forEach(channel -> channel.out().write(-1));
-        System.out.println("\u001B[37m" + "All producers ends");
+        for (One2OneChannelInt endWorkChannel : endWorkChannels) {
+            endWorkChannel.out().write(-1);
+        }
+        System.out.println("\u001B[37m" + "All producers ends, produced items: " + producedItemsAmount);
     }
 }
