@@ -11,3 +11,5 @@ rzeczy w nawiasach oznaczają co na kolejne laby?
 - zad_dom_2 - CSP rozwiązanie + rysunek z legendą
 - lab10 - przesyłanie komunikatów w modelu prezentowanym przez CSP
 - zadanieZOlimpiadyLicealnejOrazJakasInterpolacja - zadania nie zwiazane z współbierznością  
+
+![ScreenShot](ErlangTODO.JPG)
