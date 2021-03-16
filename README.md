@@ -1,5 +1,6 @@
 # programowanie współbierzne  
 ## Files(in "src" directory):
+rzeczy w nawiasach oznaczają co na kolejne laby?
 - lab1 - implementacja współbieznego dostepu do danych wielu wątków, bez ochrony danych: błędne działanie programów współbieżnych. (Semafory, Java: synchronize, notify(), wait())
 - lab2 - problem 5 filozofów. (Semafory, monitory)
 - lab3 - problem Producent-Konsument(PK). (Java: Lock, Condition)
@@ -10,4 +11,3 @@
 - zad_dom_2 - CSP rozwiązanie + rysunek z legendą
 - lab10 - przesyłanie komunikatów w modelu prezentowanym przez CSP
 - zadanieZOlimpiadyLicealnejOrazJakasInterpolacja - zadania nie zwiazane z współbierznością  
-rzeczy w nawiasach oznaczają co na kolejne laby?
