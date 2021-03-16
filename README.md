@@ -12,4 +12,5 @@ rzeczy w nawiasach oznaczają co na kolejne laby?
 - lab10 - przesyłanie komunikatów w modelu prezentowanym przez CSP
 - zadanieZOlimpiadyLicealnejOrazJakasInterpolacja - zadania nie zwiazane z współbierznością  
 
+TODO(erlang):
 ![ScreenShot](ErlangTODO.JPG)
