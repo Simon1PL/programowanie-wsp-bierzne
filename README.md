@@ -13,4 +13,5 @@ rzeczy w nawiasach oznaczają co na kolejne laby?
 - zadanieZOlimpiadyLicealnejOrazJakasInterpolacja - zadania nie zwiazane z współbierznością  
 
 TODO(erlang):
+
 ![ScreenShot](ErlangTODO.JPG)
