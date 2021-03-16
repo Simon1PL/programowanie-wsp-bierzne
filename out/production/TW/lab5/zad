@@ -1,4 +1,0 @@
-Zaimplementuj rozwiązanie problemu MP(1-K)+NC(1-K)+(2K)B (2 Lock, 4 condition)
-P producentow, K konsumentow, 2*K nierozróżnialnych elementów w monitorze(rozwiązanie bez zagładzania)
-P10, P1, P1
-K1, K5
