@@ -1,0 +1,9 @@
+Implementacja bufora rozproszonego w JCSP
+
+Należy zaprojektować i zaimplementować rozwiązanie problemu P/K dla wielu producentów, wielu konsumentów, z rozproszonym buforem - z wykorzystaniem JCSP.
+
+Ograniczenia
+Sposób konstrukcji bufora rozproszonego nie podlega żadnym ograniczeniom (nie ma ograniczeń co do:
+kolejności produkcji i konsumpcji, 
+liczby produkowanych/konsumowanych jednorazowo elementów (zalecanie 1 porcja), 
+wielkości pojedynczego bufora, z wyjątkiem tego, że bufor MUSI być rozproszony.
